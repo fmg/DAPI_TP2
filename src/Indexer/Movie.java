@@ -59,7 +59,9 @@ public class Movie {
         
         //id
         long id= Long.parseLong(movie.getElementsByTagName("id").item(0).getTextContent());
-        if(debug)System.out.println("ID film :" + id);
+        if(debug) {
+            System.out.println("ID film :" + id);
+        }
         doc.add(new LongField(MOVIE_ID, id , Field.Store.NO));
         
         //title
@@ -69,7 +71,9 @@ public class Movie {
         
         //year
         int year= Integer.parseInt(movie.getElementsByTagName("year").item(0).getTextContent());
-        if(debug)System.out.println("year :" + year);
+        if(debug) {
+            System.out.println("year :" + year);
+        }
         doc.add(new IntField(MOVIE_YEAR, year , Field.Store.YES));
         
         //genres
@@ -84,8 +88,9 @@ public class Movie {
         
         //runtime
         String runtime = movie.getElementsByTagName("runtime").item(0).getTextContent();
-        if(!runtime.equals("-"))
+        if(!runtime.equals("-")) {
             doc.add(new IntField(MOVIE_RUNTIME, Integer.parseInt(runtime) , Field.Store.YES));
+        }
         
         //ratings
         Element ratings = ((Element)movie.getElementsByTagName("ratings").item(0));
@@ -129,8 +134,9 @@ public class Movie {
         for(int i = 0; i< directors.getLength(); i++){
 
             String movie_director = directors.item(i).getTextContent();
-            if(!movie_director.equals("-"))
+            if(!movie_director.equals("-")) {
                 doc.add(new TextField(DIRECTOR_NAME, movie_director , Field.Store.YES));
+            }
         }
         
         
@@ -153,8 +159,9 @@ public class Movie {
             
             doc.add(new TextField(REVIEW_CRITIC_NAME, rev_critic , Field.Store.YES));
             doc.add(new StringField(REVIEW_DATE, rev_date , Field.Store.NO));
-            if(!rev_original_score.equals("-"))
+            if(!rev_original_score.equals("-")) {
                 doc.add(new StringField(REVIEW_ORIGINAL_SCORE, rev_original_score , Field.Store.NO));
+            }
             doc.add(new TextField(REVIEW_FRESHNESS, rev_freshness , Field.Store.YES));
             doc.add(new TextField(REVIEW_PUBLICATION, rev_publication , Field.Store.YES));
             doc.add(new TextField(REVIEW_QUOTE, rev_quote , Field.Store.NO));
