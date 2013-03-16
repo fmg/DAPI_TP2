@@ -17,6 +17,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -57,8 +58,8 @@ public class Searcher {
         return 0;
     }
     
-    public Document[] performQuerie(String field, String terms){
-        
+    public Document[] performQuery(Query q){
+        /*
         Query q;
         try {
             q = new QueryParser(Version.LUCENE_40, field, analyzer).parse(terms);
@@ -66,7 +67,7 @@ public class Searcher {
             Logger.getLogger(Searcher.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-
+        * */
         
         TopScoreDocCollector collector = TopScoreDocCollector.create(NUMBER_HITS, true);
         try {
@@ -100,6 +101,10 @@ public class Searcher {
         }
         
         return 0;
+    }
+    
+    public Analyzer getAnalyzer(){
+        return analyzer;
     }
     
     
