@@ -4,17 +4,33 @@
  */
 package GUI;
 
+import Indexer.DocIndexer;
+import Indexer.Movie;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+
 /**
  *
  * @author Desktop
  */
 public class GUIForm extends javax.swing.JFrame {
+    
+    String xmlFilePath;
 
     /**
      * Creates new form GUIForm
      */
     public GUIForm() {
         initComponents();
+        
+        String[] searchFields = Movie.getShearchableFields();
+        
+        for(Object c: searchFields){
+            searchFieldsComboBox.addItem(c);
+        }
+        
     }
 
     /**
@@ -26,21 +42,211 @@ public class GUIForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        searchFieldsComboBox = new javax.swing.JComboBox();
+        jTextField1 = new javax.swing.JTextField();
+        jTextField2 = new javax.swing.JTextField();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        filePathLabel = new javax.swing.JTextField();
+        FileChooserButton = new javax.swing.JButton();
+        resetQueryButton = new javax.swing.JButton();
+        IndexButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel2 = new javax.swing.JLabel();
+        addTermButton = new javax.swing.JButton();
+        searchQueryButton = new javax.swing.JButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMaximumSize(new java.awt.Dimension(800, 600));
+        setMinimumSize(new java.awt.Dimension(800, 600));
+        setPreferredSize(new java.awt.Dimension(905, 413));
+        setResizable(false);
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
+
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setText("Raw Query");
+
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setText("Boolean Query");
+
+        jTextField2.setEditable(false);
+
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.setText("Wildcard Query");
+
+        filePathLabel.setEditable(false);
+        filePathLabel.setFocusable(false);
+
+        FileChooserButton.setText("Choose XML File");
+        FileChooserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                FileChooserButtonActionPerformed(evt);
+            }
+        });
+
+        resetQueryButton.setText("Reset Query");
+        resetQueryButton.setEnabled(false);
+
+        IndexButton.setText("Index");
+        IndexButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                IndexButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Indexing");
+        jLabel1.setEnabled(false);
+        jLabel1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Searching");
+        jLabel2.setEnabled(false);
+
+        addTermButton.setText("Add Term");
+        addTermButton.setEnabled(false);
+
+        searchQueryButton.setText("Search");
+        searchQueryButton.setEnabled(false);
+
+        jRadioButton4.setText("Numeric Query");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(filePathLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(FileChooserButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(IndexButton, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                    .addComponent(jSeparator1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButton1)
+                            .addComponent(jRadioButton3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jRadioButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(searchFieldsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(resetQueryButton)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(searchQueryButton)))
+                                .addGap(18, 18, 18)
+                                .addComponent(addTermButton))
+                            .addComponent(jRadioButton4))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(16, 16, 16)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(filePathLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(FileChooserButton)
+                    .addComponent(IndexButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addGap(23, 23, 23)
+                .addComponent(jRadioButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jRadioButton2)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchFieldsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addTermButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButton4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(resetQueryButton)
+                    .addComponent(searchQueryButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void FileChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FileChooserButtonActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new File("."));
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().toLowerCase().endsWith(".xml") || pathname.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "XML Files";
+            }
+        };
+
+        chooser.setFileFilter(filter);
+
+        int r = chooser.showOpenDialog(this);
+        if (r == JFileChooser.APPROVE_OPTION) {
+            xmlFilePath = chooser.getSelectedFile().getPath();
+            filePathLabel.setText(xmlFilePath);
+        }
+    }//GEN-LAST:event_FileChooserButtonActionPerformed
+
+    private void IndexButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IndexButtonActionPerformed
+        // TODO add your handling code here:
+        
+        int ret = DocIndexer.indexMovieFile(xmlFilePath);
+        
+        if(ret == 0) {
+            JOptionPane.showMessageDialog(this,"Index created", "Index", JOptionPane.INFORMATION_MESSAGE);
+            
+            addTermButton.setEnabled(true);
+            resetQueryButton.setEnabled(true);
+            searchQueryButton.setEnabled(true);
+            
+        }
+        else if(ret == -1) {
+            JOptionPane.showMessageDialog(this,"Error reading XML file", "Index", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            JOptionPane.showMessageDialog(this,"Error creating Index", "Index", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_IndexButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -77,5 +283,24 @@ public class GUIForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton FileChooserButton;
+    private javax.swing.JButton IndexButton;
+    private javax.swing.JButton addTermButton;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JTextField filePathLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JTextField jTextField2;
+    private javax.swing.JButton resetQueryButton;
+    private javax.swing.JComboBox searchFieldsComboBox;
+    private javax.swing.JButton searchQueryButton;
     // End of variables declaration//GEN-END:variables
 }
