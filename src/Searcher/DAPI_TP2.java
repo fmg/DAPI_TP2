@@ -2,31 +2,15 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package Indexer;
+package Searcher;
 
-import java.io.File;
+import Indexer.DocIndexer;
+import Indexer.Movie;
 import java.io.IOException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopScoreDocCollector;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
@@ -39,6 +23,8 @@ public class DAPI_TP2 {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException, ParseException {
+        
+        /*
         // TODO code application logic here
         
         String indexPath = "index";
@@ -113,5 +99,21 @@ public class DAPI_TP2 {
         // reader can only be closed when there
         // is no need to access the documents any more.
         reader.close();
+        * */
+        
+        DocIndexer.indexMovieFile("movies2.xml");
+        
+        Searcher sh = new Searcher();
+        sh.initSearch();
+        
+        Document[] docs = sh.performQuerie(Movie.MOVIE_TITLE, "Giant");
+        for(int i=0;i<docs.length;i++) {
+            //int docId = hits[i].doc;
+            //org.apache.lucene.document.Document d = searcher.doc(docId);
+            System.out.println((i + 1) + ". " + docs[i].get("title") /*+ " -> Score: " + hits[i].score*/);
+        }
+        
+        sh.finishSearchSession();
+        
     }
 }

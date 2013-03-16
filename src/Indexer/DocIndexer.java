@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
  */
 public class DocIndexer {
     
-    final static String INDEX_PATH = "index";
+    public final static String INDEX_PATH = "index";
 
     public static int indexMovieFile(String movieXMLFile){
         

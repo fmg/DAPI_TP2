@@ -21,31 +21,31 @@ import org.w3c.dom.NodeList;
  */
 public class Movie {
     
-    final static String MOVIE_TITLE = "title";
-    final static String MOVIE_ID = "id";
-    final static String MOVIE_YEAR = "year";
-    final static String MOVIE_GENRE = "genre";
-    final static String MOVIE_MPAA_RATING = "mpaa_rating";
-    final static String MOVIE_RUNTIME = "runtime";
+    public final static String MOVIE_TITLE = "title";
+    public final static String MOVIE_ID = "id";
+    public final static String MOVIE_YEAR = "year";
+    public final static String MOVIE_GENRE = "genre";
+    public final static String MOVIE_MPAA_RATING = "mpaa_rating";
+    public final static String MOVIE_RUNTIME = "runtime";
     
-    final static String MOVIE_RATING_CRITICS_RATING = "critics_rating";
-    final static String MOVIE_RATING_CRITICS_SCORE= "critics_score";
-    final static String MOVIE_RATING_AUDIENCE_RATING = "audience_rating";
-    final static String MOVIE_RATING_AUDIENCE_SCORE = "audience_score";
+    public final static String MOVIE_RATING_CRITICS_RATING = "critics_rating";
+    public final static String MOVIE_RATING_CRITICS_SCORE= "critics_score";
+    public final static String MOVIE_RATING_AUDIENCE_RATING = "audience_rating";
+    public final static String MOVIE_RATING_AUDIENCE_SCORE = "audience_score";
     
-    final static String MOVIE_SYNOPSIS = "synopsis";
-    final static String ACTOR_ID = "actor_id";
-    final static String ACTOR_NAME = "actor_name";
-    final static String MOVIE_CHARACTER = "character";
-    final static String DIRECTOR_NAME ="director_name";
-    final static String STUDIO_NAME = "studio_name";
+    public final static String MOVIE_SYNOPSIS = "synopsis";
+    public final static String ACTOR_ID = "actor_id";
+    public final static String ACTOR_NAME = "actor_name";
+    public final static String MOVIE_CHARACTER = "character";
+    public final static String DIRECTOR_NAME ="director_name";
+    public final static String STUDIO_NAME = "studio_name";
     
-    final static String REVIEW_CRITIC_NAME = "critic_name";
-    final static String REVIEW_DATE = "review_date";
-    final static String REVIEW_ORIGINAL_SCORE = "review_original_score";
-    final static String REVIEW_FRESHNESS = "review_freshness";
-    final static String REVIEW_PUBLICATION = "publication_name";
-    final static String REVIEW_QUOTE = "review_quote";
+    public final static String REVIEW_CRITIC_NAME = "critic_name";
+    public final static String REVIEW_DATE = "review_date";
+    public final static String REVIEW_ORIGINAL_SCORE = "review_original_score";
+    public final static String REVIEW_FRESHNESS = "review_freshness";
+    public final static String REVIEW_PUBLICATION = "publication_name";
+    public final static String REVIEW_QUOTE = "review_quote";
 
 
 
