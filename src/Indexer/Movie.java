@@ -21,7 +21,7 @@ import org.w3c.dom.NodeList;
  */
 public class Movie {
 
-    private final static int NUMBER_SEARCHABLE_FIELDS = 22;
+    private final static int NUMBER_SEARCHABLE_FIELDS = 23;
     
     
     public final static String MOVIE_TITLE = "title";
@@ -30,6 +30,7 @@ public class Movie {
     public final static String MOVIE_GENRE = "genre";
     public final static String MOVIE_MPAA_RATING = "mpaa_rating";
     public final static String MOVIE_RUNTIME = "runtime";
+    public final static String MOVIE_CRITICS_CONSENSUS = "critics_consensus";
     
     public final static String MOVIE_RATING_CRITICS_RATING = "critics_rating";
     public final static String MOVIE_RATING_CRITICS_SCORE = "critics_score";
@@ -93,6 +94,11 @@ public class Movie {
         if (!runtime.equals("-")) {
             doc.add(new IntField(MOVIE_RUNTIME, Integer.parseInt(runtime), Field.Store.YES));
         }
+        
+        
+        //critics_consensus
+        doc.add(new TextField(MOVIE_CRITICS_CONSENSUS, movie.getElementsByTagName("critics_consensus").item(0).getTextContent(), Field.Store.NO));
+
 
         //ratings
         Element ratings = ((Element) movie.getElementsByTagName("ratings").item(0));
@@ -187,6 +193,7 @@ public class Movie {
         fields[++i] = MOVIE_GENRE;
         fields[++i] = MOVIE_MPAA_RATING;
         fields[++i] = MOVIE_RUNTIME;
+        fields[++i] = MOVIE_CRITICS_CONSENSUS;
         
         fields[++i] = MOVIE_RATING_CRITICS_RATING;
         fields[++i] = MOVIE_RATING_CRITICS_SCORE;

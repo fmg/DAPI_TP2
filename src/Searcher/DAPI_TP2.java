@@ -10,6 +10,8 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.xml.sax.SAXException;
 
@@ -31,11 +33,11 @@ public class DAPI_TP2 {
         
         
         
-        Query q = QueryBuilder.buildRawQuery(sh.getAnalyzer(), "Great", Movie.MOVIE_TITLE);
+        //Query q = QueryBuilder.buildRawQuery(sh.getAnalyzer(), "Great", Movie.MOVIE_TITLE);
         
-        //BooleanQuery q = new BooleanQuery();
-        //QueryBuilder.addTermToBooleanQuery(q, Movie.MOVIE_TITLE, BooleanClause.Occur.SHOULD, new String[]{"Great"});
-        //QueryBuilder.addTermToBooleanQuery(q, Movie.STUDIO_NAME, BooleanClause.Occur.MUST_NOT, new String[]{"Disney"});
+        BooleanQuery q = new BooleanQuery();
+        QueryBuilder.addTermToBooleanQuery(q, Movie.MOVIE_TITLE, BooleanClause.Occur.SHOULD, new String[]{"Great"});
+        QueryBuilder.addTermToBooleanQuery(q, Movie.STUDIO_NAME, BooleanClause.Occur.MUST_NOT, new String[]{"Summit"});
         
         //PhraseQuery q = new PhraseQuery();
         //QueryBuilder.addTermsToPhraseQuery(q, Movie.MOVIE_TITLE, new String[]{"Powerful"});
@@ -52,7 +54,7 @@ public class DAPI_TP2 {
             //org.apache.lucene.document.Document d = searcher.doc(docId);
             System.out.println((i + 1) + ". " + docs[i].get("title") /*+ " -> Score: " + hits[i].score*/);
         }
-        
+      
         sh.finishSearchSession();
         
     }

@@ -26,7 +26,7 @@ public class QueryBuilder {
     
     public static void addTermsToPhraseQuery(PhraseQuery phQuery, String field, String[] terms){
         for(int i = 0; i< terms.length; i++){
-            phQuery.add(new Term(field, terms[i]));
+            phQuery.add(new Term(field, terms[i].toLowerCase()));
         }
     }
     
@@ -48,7 +48,7 @@ public class QueryBuilder {
     public static void addTermToBooleanQuery(BooleanQuery query, String field, BooleanClause.Occur clause, String[] words){
         
         for(int i = 0; i< words.length; i++){
-            TermQuery tq = new TermQuery(new Term(field, words[i]));
+            TermQuery tq = new TermQuery(new Term(field, words[i].toLowerCase()));
             query.add(tq,clause);
         }
     }
