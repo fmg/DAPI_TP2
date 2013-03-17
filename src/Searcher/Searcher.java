@@ -27,7 +27,7 @@ import org.apache.lucene.util.Version;
  */
 public class Searcher {
     
-    final static int NUMBER_HITS = 15;
+    final static int NUMBER_HITS = 20;
     
     private String userQuery;
     private Analyzer analyzer;
@@ -55,15 +55,6 @@ public class Searcher {
     }
     
     public Document[] performQuery(Query q){
-        /*
-        Query q;
-        try {
-            q = new QueryParser(Version.LUCENE_40, field, analyzer).parse(terms);
-        } catch (ParseException ex) {
-            Logger.getLogger(Searcher.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-        * */
         
         TopScoreDocCollector collector = TopScoreDocCollector.create(NUMBER_HITS, true);
         try {

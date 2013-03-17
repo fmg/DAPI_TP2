@@ -6,10 +6,20 @@ package GUI;
 
 import Indexer.DocIndexer;
 import Indexer.Movie;
+import Searcher.QueryBuilder;
+import Searcher.Searcher;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ButtonModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 
 /**
  *
@@ -17,7 +27,18 @@ import javax.swing.filechooser.FileFilter;
  */
 public class GUIForm extends javax.swing.JFrame {
     
+    final static int RAW_QUERY = 1;
+    final static int BOOLEAN_QUERY = 2;
+    
+    Searcher searcher;
+    
     String xmlFilePath;
+    BooleanQuery bquery;
+    Query rawQuery;
+    int selectedQuery = BOOLEAN_QUERY;
+    
+            
+    
 
     /**
      * Creates new form GUIForm
@@ -30,6 +51,9 @@ public class GUIForm extends javax.swing.JFrame {
         for(Object c: searchFields){
             searchFieldsComboBox.addItem(c);
         }
+        
+        searcher = new Searcher();
+        bquery = new BooleanQuery();
         
     }
 
@@ -44,13 +68,13 @@ public class GUIForm extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        resultsTextArea = new javax.swing.JTextArea();
+        rawQueryRadioButton = new javax.swing.JRadioButton();
+        booleanQueryRadioButton = new javax.swing.JRadioButton();
         searchFieldsComboBox = new javax.swing.JComboBox();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        wordsTextField = new javax.swing.JTextField();
+        queryOutputTextField = new javax.swing.JTextField();
+        wildcardQueryRadioButton = new javax.swing.JRadioButton();
         filePathLabel = new javax.swing.JTextField();
         FileChooserButton = new javax.swing.JButton();
         resetQueryButton = new javax.swing.JButton();
@@ -60,7 +84,9 @@ public class GUIForm extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         addTermButton = new javax.swing.JButton();
         searchQueryButton = new javax.swing.JButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
+        queryClauseComboBox = new javax.swing.JComboBox();
+        rangeQueryRadioButton = new javax.swing.JRadioButton();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMaximumSize(new java.awt.Dimension(800, 600));
@@ -68,21 +94,29 @@ public class GUIForm extends javax.swing.JFrame {
         setPreferredSize(new java.awt.Dimension(905, 413));
         setResizable(false);
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        resultsTextArea.setEditable(false);
+        resultsTextArea.setColumns(20);
+        resultsTextArea.setRows(5);
+        resultsTextArea.setFocusable(false);
+        jScrollPane1.setViewportView(resultsTextArea);
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setText("Raw Query");
+        buttonGroup1.add(rawQueryRadioButton);
+        rawQueryRadioButton.setText("Raw Query");
+        rawQueryRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rawQueryRadioButtonActionPerformed(evt);
+            }
+        });
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Boolean Query");
+        buttonGroup1.add(booleanQueryRadioButton);
+        booleanQueryRadioButton.setSelected(true);
+        booleanQueryRadioButton.setText("Boolean Query");
 
-        jTextField2.setEditable(false);
+        queryOutputTextField.setEditable(false);
+        queryOutputTextField.setFocusable(false);
 
-        buttonGroup1.add(jRadioButton3);
-        jRadioButton3.setText("Wildcard Query");
+        buttonGroup1.add(wildcardQueryRadioButton);
+        wildcardQueryRadioButton.setText("Wildcard Query");
 
         filePathLabel.setEditable(false);
         filePathLabel.setFocusable(false);
@@ -96,8 +130,14 @@ public class GUIForm extends javax.swing.JFrame {
 
         resetQueryButton.setText("Reset Query");
         resetQueryButton.setEnabled(false);
+        resetQueryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetQueryButtonActionPerformed(evt);
+            }
+        });
 
         IndexButton.setText("Index");
+        IndexButton.setEnabled(false);
         IndexButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 IndexButtonActionPerformed(evt);
@@ -115,11 +155,29 @@ public class GUIForm extends javax.swing.JFrame {
 
         addTermButton.setText("Add Term");
         addTermButton.setEnabled(false);
+        addTermButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addTermButtonActionPerformed(evt);
+            }
+        });
 
         searchQueryButton.setText("Search");
         searchQueryButton.setEnabled(false);
+        searchQueryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchQueryButtonActionPerformed(evt);
+            }
+        });
 
-        jRadioButton4.setText("Numeric Query");
+        queryClauseComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "MUST", "SHOULD", "MUST_NOT" }));
+
+        buttonGroup1.add(rangeQueryRadioButton);
+        rangeQueryRadioButton.setText("Numeric Range Query");
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel3.setText("Query:");
+        jLabel3.setFocusable(false);
+        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -130,23 +188,22 @@ public class GUIForm extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(filePathLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 606, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(FileChooserButton)
                         .addGap(18, 18, 18)
-                        .addComponent(IndexButton, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE))
+                        .addComponent(IndexButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(jSeparator1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton3)
+                            .addComponent(rawQueryRadioButton)
+                            .addComponent(wildcardQueryRadioButton)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jRadioButton2)
+                                .addComponent(booleanQueryRadioButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(wordsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(searchFieldsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -154,9 +211,15 @@ public class GUIForm extends javax.swing.JFrame {
                                         .addComponent(resetQueryButton)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(searchQueryButton)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(queryClauseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(addTermButton))
-                            .addComponent(jRadioButton4))
+                            .addComponent(rangeQueryRadioButton)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(queryOutputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 833, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -175,23 +238,26 @@ public class GUIForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addGap(23, 23, 23)
-                .addComponent(jRadioButton1)
+                .addComponent(rawQueryRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(booleanQueryRadioButton)
+                    .addComponent(wordsTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchFieldsComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addTermButton))
+                    .addComponent(addTermButton)
+                    .addComponent(queryClauseComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton3)
+                .addComponent(wildcardQueryRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton4)
+                .addComponent(rangeQueryRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(resetQueryButton)
                     .addComponent(searchQueryButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(queryOutputTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -224,20 +290,29 @@ public class GUIForm extends javax.swing.JFrame {
         if (r == JFileChooser.APPROVE_OPTION) {
             xmlFilePath = chooser.getSelectedFile().getPath();
             filePathLabel.setText(xmlFilePath);
+            IndexButton.setEnabled(true);
         }
     }//GEN-LAST:event_FileChooserButtonActionPerformed
 
     private void IndexButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IndexButtonActionPerformed
-        // TODO add your handling code here:
         
         int ret = DocIndexer.indexMovieFile(xmlFilePath);
         
         if(ret == 0) {
             JOptionPane.showMessageDialog(this,"Index created", "Index", JOptionPane.INFORMATION_MESSAGE);
             
+            
+            ret = searcher.initSearch();
+            
+            if(ret == -1){
+                JOptionPane.showMessageDialog(this,"Search not ready.\nPlease try again.", "Search", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
             addTermButton.setEnabled(true);
             resetQueryButton.setEnabled(true);
-            searchQueryButton.setEnabled(true);
+            IndexButton.setEnabled(false);
+
             
         }
         else if(ret == -1) {
@@ -247,6 +322,116 @@ public class GUIForm extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this,"Error creating Index", "Index", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_IndexButtonActionPerformed
+
+    private void addTermButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addTermButtonActionPerformed
+        
+        BooleanClause.Occur clause = BooleanClause.Occur.valueOf(queryClauseComboBox.getSelectedItem().toString());
+        String sfield = searchFieldsComboBox.getSelectedItem().toString();
+        String words = wordsTextField.getText();
+        
+        if(words.length() == 0){
+            JOptionPane.showMessageDialog(this,"No input", "Invalid query", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        String[] splitedWords = words.split(" ");
+        
+        if(selectedQuery == RAW_QUERY){
+            try {
+                rawQuery = QueryBuilder.buildRawQuery(searcher.getAnalyzer(), words, sfield);
+                resultsTextArea.setText("");
+                queryOutputTextField.setText(rawQuery.toString());
+                searchQueryButton.setEnabled(true);
+
+            } catch (ParseException ex) {
+                rawQuery = null;
+                JOptionPane.showMessageDialog(this,"Invalid raw query. See results area for explanation", "Raw Query", JOptionPane.ERROR_MESSAGE);
+                resultsTextArea.setText(ex.getMessage());
+
+            }
+        }else{
+            
+            if(booleanQueryRadioButton.isSelected()){
+                
+                
+                
+                QueryBuilder.addTermToBooleanQuery(bquery, sfield, clause, splitedWords);
+                resultsTextArea.setText("");
+                queryOutputTextField.setText(bquery.toString());
+                searchQueryButton.setEnabled(true);
+                
+            }else if(wildcardQueryRadioButton.isSelected()){
+                
+                QueryBuilder.addWildCardTermToBooleanQuery(bquery, sfield, clause, words.split(" ")[0]);
+                resultsTextArea.setText("");
+                queryOutputTextField.setText(bquery.toString());
+                searchQueryButton.setEnabled(true);
+                
+            }else if(rangeQueryRadioButton.isSelected()){
+                
+                String[] splitedNumbers = splitedWords[0].split("-");
+                
+                if(splitedNumbers.length != 2){
+                    JOptionPane.showMessageDialog(this,"Invalid numeric query. Must contain \"number-number\" only", "Numeric Range Query", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                int begin = Integer.parseInt(splitedNumbers[0]);
+                int end = Integer.parseInt(splitedNumbers[1]);
+                
+                QueryBuilder.addRangeTermToBooleanQuery(bquery, sfield, clause, begin, end);
+                
+                resultsTextArea.setText("");
+                queryOutputTextField.setText(bquery.toString());
+                searchQueryButton.setEnabled(true);
+                
+            }     
+        }
+        
+        
+        
+    }//GEN-LAST:event_addTermButtonActionPerformed
+
+    private void resetQueryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetQueryButtonActionPerformed
+        
+        selectedQuery = BOOLEAN_QUERY;
+        
+        rawQuery = null;
+        bquery = new BooleanQuery();        
+        
+        wordsTextField.setText("");
+        queryOutputTextField.setText("");
+        resultsTextArea.setText("");
+        
+        
+        searchQueryButton.setEnabled(false);
+
+    }//GEN-LAST:event_resetQueryButtonActionPerformed
+
+    private void rawQueryRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rawQueryRadioButtonActionPerformed
+        selectedQuery = RAW_QUERY;
+    }//GEN-LAST:event_rawQueryRadioButtonActionPerformed
+
+    private void searchQueryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchQueryButtonActionPerformed
+        
+        
+        Document[] docs = null;
+        
+        if(selectedQuery == RAW_QUERY){
+            docs = searcher.performQuery(rawQuery);
+        }else{
+            docs = searcher.performQuery(bquery);
+        }
+        
+        System.out.println("\nQUERY RESULTS -> "+  docs.length);
+        
+        for(int i=0;i<docs.length;i++) {
+            //int docId = hits[i].doc;
+            //org.apache.lucene.document.Document d = searcher.doc(docId);
+            resultsTextArea.append("\n"+ (i + 1) + ". " + docs[i].get("title")/*+ " -> Score: " + hits[i].score*/);
+        }
+        
+    }//GEN-LAST:event_searchQueryButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -286,21 +471,23 @@ public class GUIForm extends javax.swing.JFrame {
     private javax.swing.JButton FileChooserButton;
     private javax.swing.JButton IndexButton;
     private javax.swing.JButton addTermButton;
+    private javax.swing.JRadioButton booleanQueryRadioButton;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField filePathLabel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
+    private javax.swing.JComboBox queryClauseComboBox;
+    private javax.swing.JTextField queryOutputTextField;
+    private javax.swing.JRadioButton rangeQueryRadioButton;
+    private javax.swing.JRadioButton rawQueryRadioButton;
     private javax.swing.JButton resetQueryButton;
+    private javax.swing.JTextArea resultsTextArea;
     private javax.swing.JComboBox searchFieldsComboBox;
     private javax.swing.JButton searchQueryButton;
+    private javax.swing.JRadioButton wildcardQueryRadioButton;
+    private javax.swing.JTextField wordsTextField;
     // End of variables declaration//GEN-END:variables
 }

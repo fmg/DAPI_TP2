@@ -36,8 +36,9 @@ public class DAPI_TP2 {
         //Query q = QueryBuilder.buildRawQuery(sh.getAnalyzer(), "Great", Movie.MOVIE_TITLE);
         
         BooleanQuery q = new BooleanQuery();
-        QueryBuilder.addTermToBooleanQuery(q, Movie.MOVIE_TITLE, BooleanClause.Occur.SHOULD, new String[]{"Great"});
-        QueryBuilder.addTermToBooleanQuery(q, Movie.STUDIO_NAME, BooleanClause.Occur.MUST_NOT, new String[]{"Summit"});
+        //QueryBuilder.addTermToBooleanQuery(q, Movie.MOVIE_TITLE, BooleanClause.Occur.MUST, new String[]{"Linings"});
+        QueryBuilder.addTermToBooleanQuery(q, Movie.STUDIO_NAME, BooleanClause.Occur.MUST_NOT, new String[]{"Disney"});
+        QueryBuilder.addRangeTermToBooleanQuery(q, Movie.MOVIE_YEAR, BooleanClause.Occur.MUST, 2011, 2014);
         
         //PhraseQuery q = new PhraseQuery();
         //QueryBuilder.addTermsToPhraseQuery(q, Movie.MOVIE_TITLE, new String[]{"Powerful"});
