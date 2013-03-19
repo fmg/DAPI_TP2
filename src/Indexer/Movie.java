@@ -53,7 +53,7 @@ public class Movie {
 
 
     
-    public final static boolean debug = true;
+    public final static boolean debug = false;
     
 
     public static void ParseAndIndexMovie(Element movie, IndexWriter writer) throws IOException {
@@ -70,7 +70,9 @@ public class Movie {
         //title
         String title = movie.getElementsByTagName("title").item(0).getTextContent();
         System.out.println("Indexing film :" + title);
-        doc.add(new TextField(MOVIE_TITLE, title, Field.Store.YES));
+        TextField tfTitle = new TextField(MOVIE_TITLE, title, Field.Store.YES);
+        tfTitle.setBoost(1.4f);
+        doc.add(tfTitle);
 
         //year
         int year = Integer.parseInt(movie.getElementsByTagName("year").item(0).getTextContent());

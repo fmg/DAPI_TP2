@@ -13,6 +13,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.xml.sax.SAXException;
 
 /**
@@ -46,14 +47,21 @@ public class DAPI_TP2 {
         
         
         System.out.println("Query: " + q.toString());
-        Document[] docs = sh.performQuery(q);
+        ScoreDoc[] hits = sh.performQuery(q);
+        
+        Document[] docs = new Document[hits.length];
+            
+            for(int i=0;i<hits.length;++i) {
+                int docId = hits[i].doc;
+                docs[i] = sh.getIndexSearcher().doc(docId);
+            }
         
         System.out.println("\nQUERY RESULTS");
         
         for(int i=0;i<docs.length;i++) {
             //int docId = hits[i].doc;
             //org.apache.lucene.document.Document d = searcher.doc(docId);
-            System.out.println((i + 1) + ". " + docs[i].get("title") /*+ " -> Score: " + hits[i].score*/);
+            System.out.println((i + 1) + ". " + docs[i].get("title") + " -> Score: " + hits[i].score);
         }
       
         sh.finishSearchSession();

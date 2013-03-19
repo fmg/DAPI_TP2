@@ -9,9 +9,7 @@ import Indexer.Movie;
 import Searcher.QueryBuilder;
 import Searcher.Searcher;
 import java.io.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.ButtonModel;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -20,6 +18,7 @@ import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 
 /**
  *
@@ -415,20 +414,31 @@ public class GUIForm extends javax.swing.JFrame {
     private void searchQueryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchQueryButtonActionPerformed
         
         
-        Document[] docs = null;
+        ScoreDoc[] hits = null;
         
         if(selectedQuery == RAW_QUERY){
-            docs = searcher.performQuery(rawQuery);
+            hits = searcher.performQuery(rawQuery);
         }else{
-            docs = searcher.performQuery(bquery);
+            hits = searcher.performQuery(bquery);
         }
+             
         
-        System.out.println("\nQUERY RESULTS -> "+  docs.length);
-        
-        for(int i=0;i<docs.length;i++) {
-            //int docId = hits[i].doc;
-            //org.apache.lucene.document.Document d = searcher.doc(docId);
-            resultsTextArea.append("\n"+ (i + 1) + ". " + docs[i].get("title")/*+ " -> Score: " + hits[i].score*/);
+        try{
+            
+            System.out.println("\nQUERY RESULTS -> "+  hits.length);
+
+            
+            for(int i=0;i<hits.length;++i) {
+                int docId = hits[i].doc;
+                Document doc = searcher.getIndexSearcher().doc(docId);
+                resultsTextArea.append("\n"+ (i + 1) + ".    Score: " + hits[i].score  + 
+                        "\tTitle: "+ doc.get(Movie.MOVIE_TITLE) + 
+                        "\t\tYear: " + doc.get(Movie.MOVIE_YEAR) + 
+                        "\tStudio: " + doc.get(Movie.STUDIO_NAME));
+            }
+
+        }catch(IOException ex){
+            resultsTextArea.setText("Query Error: "+ ex.getMessage());
         }
         
     }//GEN-LAST:event_searchQueryButtonActionPerformed

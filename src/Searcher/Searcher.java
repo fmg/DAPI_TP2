@@ -54,14 +54,14 @@ public class Searcher {
         return 0;
     }
     
-    public Document[] performQuery(Query q){
+    public ScoreDoc[] performQuery(Query q){
         
         TopScoreDocCollector collector = TopScoreDocCollector.create(NUMBER_HITS, true);
         try {
             searcher.search(q, collector);
             
-            ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
+            return collector.topDocs().scoreDocs;
+/*
             Document[] documents = new Document[hits.length];
             
             for(int i=0;i<hits.length;++i) {
@@ -70,7 +70,7 @@ public class Searcher {
             }
             
             return documents;
-            
+   */         
         } catch (IOException ex) {
             Logger.getLogger(Searcher.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -94,5 +94,9 @@ public class Searcher {
         return analyzer;
     }
     
-     
+    
+    public IndexSearcher getIndexSearcher(){
+        return searcher;
+    }
+    
 }
