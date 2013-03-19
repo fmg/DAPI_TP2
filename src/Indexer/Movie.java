@@ -1,6 +1,5 @@
 package Indexer;
 
-import com.sun.xml.internal.ws.model.FieldSignature;
 import java.io.IOException;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
@@ -38,18 +37,18 @@ public class Movie {
     public final static String MOVIE_RATING_AUDIENCE_SCORE = "audience_score";
     
     public final static String MOVIE_SYNOPSIS = "synopsis";
-    public final static String ACTOR_ID = "actor_id";
+    //public final static String ACTOR_ID = "actor_id";
     public final static String ACTOR_NAME = "actor_name";
     public final static String MOVIE_CHARACTER = "character";
     public final static String DIRECTOR_NAME = "director_name";
     public final static String STUDIO_NAME = "studio_name";
     
     public final static String REVIEW_CRITIC_NAME = "critic_name";
-    public final static String REVIEW_DATE = "review_date";
-    public final static String REVIEW_ORIGINAL_SCORE = "review_original_score";
-    public final static String REVIEW_FRESHNESS = "review_freshness";
+    //public final static String REVIEW_DATE = "review_date";
+    //public final static String REVIEW_ORIGINAL_SCORE = "review_original_score";
+    //public final static String REVIEW_FRESHNESS = "review_freshness";
     public final static String REVIEW_PUBLICATION = "publication_name";
-    public final static String REVIEW_QUOTE = "review_quote";
+    //public final static String REVIEW_QUOTE = "review_quote";
 
 
     
@@ -65,7 +64,7 @@ public class Movie {
         if (debug) {
             System.out.println("ID film :" + id);
         }
-        doc.add(new LongField(MOVIE_ID, id, Field.Store.NO));
+        doc.add(new LongField(MOVIE_ID, id, Field.Store.YES));
 
         //title
         String title = movie.getElementsByTagName("title").item(0).getTextContent();
@@ -123,8 +122,10 @@ public class Movie {
             int actor_id = Integer.parseInt(actor.getElementsByTagName("id").item(0).getTextContent());
             String actor_name = actor.getElementsByTagName("name").item(0).getTextContent();
 
-            doc.add(new IntField(ACTOR_ID, actor_id, Field.Store.NO));
-            doc.add(new TextField(ACTOR_NAME, actor_name, Field.Store.YES));
+            //doc.add(new IntField(ACTOR_ID, actor_id, Field.Store.NO));
+            TextField actorTF = new TextField(ACTOR_NAME, actor_name, Field.Store.YES);
+            actorTF.setBoost(1.3f);
+            doc.add(actorTF);
 
 
             NodeList characters = ((Element) actor.getElementsByTagName("characters").item(0)).getElementsByTagName("character");
@@ -168,13 +169,15 @@ public class Movie {
             String rev_quote = review.getElementsByTagName("quote").item(0).getTextContent();
 
             doc.add(new TextField(REVIEW_CRITIC_NAME, rev_critic, Field.Store.YES));
+            /*
             doc.add(new StringField(REVIEW_DATE, rev_date, Field.Store.NO));
             if (!rev_original_score.equals("-")) {
                 doc.add(new StringField(REVIEW_ORIGINAL_SCORE, rev_original_score, Field.Store.NO));
             }
             doc.add(new TextField(REVIEW_FRESHNESS, rev_freshness, Field.Store.YES));
+            * */ 
             doc.add(new TextField(REVIEW_PUBLICATION, rev_publication, Field.Store.YES));
-            doc.add(new TextField(REVIEW_QUOTE, rev_quote, Field.Store.NO));
+            //doc.add(new TextField(REVIEW_QUOTE, rev_quote, Field.Store.NO));
 
         }
 
@@ -186,7 +189,7 @@ public class Movie {
 
     public static String[] getShearchableFields() {
         
-        String[] fields = new String[NUMBER_SEARCHABLE_FIELDS];
+        String[] fields = new String[NUMBER_SEARCHABLE_FIELDS-5];
 
         int i = 0;
         fields[i] = MOVIE_TITLE;
@@ -203,18 +206,18 @@ public class Movie {
         fields[++i] = MOVIE_RATING_AUDIENCE_SCORE;
         
         fields[++i] = MOVIE_SYNOPSIS;
-        fields[++i] = ACTOR_ID;
+        //fields[++i] = ACTOR_ID;
         fields[++i] = ACTOR_NAME;
         fields[++i] = MOVIE_CHARACTER;
         fields[++i] = DIRECTOR_NAME;
         fields[++i] = STUDIO_NAME;
         
         fields[++i] = REVIEW_CRITIC_NAME;
-        fields[++i] = REVIEW_DATE;
-        fields[++i] = REVIEW_ORIGINAL_SCORE;
-        fields[++i] = REVIEW_FRESHNESS;
+        //fields[++i] = REVIEW_DATE;
+        //fields[++i] = REVIEW_ORIGINAL_SCORE;
+        //fields[++i] = REVIEW_FRESHNESS;
         fields[++i] = REVIEW_PUBLICATION;
-        fields[++i] = REVIEW_QUOTE;
+        //fields[++i] = REVIEW_QUOTE;
 
 
         return fields;

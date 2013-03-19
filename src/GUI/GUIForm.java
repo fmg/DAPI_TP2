@@ -96,7 +96,6 @@ public class GUIForm extends javax.swing.JFrame {
         resultsTextArea.setEditable(false);
         resultsTextArea.setColumns(20);
         resultsTextArea.setRows(5);
-        resultsTextArea.setFocusable(false);
         jScrollPane1.setViewportView(resultsTextArea);
 
         buttonGroup1.add(rawQueryRadioButton);
@@ -434,7 +433,10 @@ public class GUIForm extends javax.swing.JFrame {
                 resultsTextArea.append("\n"+ (i + 1) + ".    Score: " + hits[i].score  + 
                         "\tTitle: "+ doc.get(Movie.MOVIE_TITLE) + 
                         "\t\tYear: " + doc.get(Movie.MOVIE_YEAR) + 
-                        "\tStudio: " + doc.get(Movie.STUDIO_NAME));
+                        "\tStudio: " + doc.get(Movie.STUDIO_NAME)+
+                        "\tLink: http://www.rottentomatoes.com/m/" + doc.get(Movie.MOVIE_ID) + "/"
+                        );
+                
             }
 
         }catch(IOException ex){

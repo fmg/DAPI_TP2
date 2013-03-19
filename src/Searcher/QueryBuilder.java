@@ -4,8 +4,6 @@
  */
 package Searcher;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
